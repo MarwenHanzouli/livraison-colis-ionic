@@ -1,0 +1,7 @@
+{
+  "name": "livraison-colis",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
