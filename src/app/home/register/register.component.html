@@ -1,0 +1,84 @@
+<div class="main" *ngIf="!forgot">
+  <form [formGroup]="registerForm" (ngSubmit)="register()">
+    <div>
+
+      <ion-item>
+        <ion-icon color="secondary" name="person" slot="start"></ion-icon>
+        <ion-label position="floating">Nom</ion-label>
+        <ion-input clearInput="true" formControlName="lastName" inputmode="text"></ion-input>
+      </ion-item>
+      <div class="error" *ngIf="f.lastName.errors && (f.lastName.dirty || f.lastName.touched || submitted)">
+        <div *ngIf="f.lastName.errors.required">Champ obligatoire</div>
+      </div>
+
+      <ion-item>
+        <ion-icon color="secondary" name="person" slot="start"></ion-icon>
+        <ion-label position="floating">Prénom</ion-label>
+        <ion-input clearInput="true" formControlName="firstName" inputmode="text"></ion-input>
+      </ion-item>
+      <div class="error" *ngIf="f.firstName.errors && (f.firstName.dirty || f.firstName.touched || submitted)">
+        <div *ngIf="f.firstName.errors.required">Champ obligatoire</div>
+      </div>
+
+      <ion-item>
+        <ion-icon color="secondary" name="call" slot="start"></ion-icon>
+        <ion-label position="floating">Téléphone</ion-label>
+        <ion-input clearInput="true" formControlName="phone" inputmode="text"></ion-input>
+      </ion-item>
+      <div class="error" *ngIf="f.phone.errors && (f.phone.dirty || f.phone.touched || submitted)">
+        <div *ngIf="f.phone.errors.required">Champ obligatoire</div>
+        <div *ngIf="f.phone.errors.pattern">Vous devez entrer un téléphone valide</div>
+      </div>
+
+      <ion-item>
+        <ion-icon color="secondary" name="mail" slot="start"></ion-icon>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input (ionChange)="emailRegistred=false" clearInput="true" formControlName="email" inputmode="email"></ion-input>
+      </ion-item>
+      <div class="error" *ngIf="f.email.errors && (f.email.dirty || f.email.touched || submitted)">
+        <div *ngIf="f.email.errors.required">Champ obligatoire</div>
+        <div *ngIf="f.email.errors.email">Email invalid</div>
+      </div>
+      <div class="error" *ngIf="emailRegistred">
+        <div>Cet e-mail est déjà enregistré</div>
+      </div>
+      <ion-item>
+        <ion-icon  color="secondary" name="lock-closed" slot="start"></ion-icon>
+        <ion-label position="floating">Mot de passe</ion-label>
+        <ion-input clearInput="true" [type]="type" formControlName="password"></ion-input>
+        <ion-icon  [color]="color" [name]="eye" (click)="changePassword()" slot="end" style="margin-top: 15px;"></ion-icon>
+      </ion-item>
+      <div class="error" *ngIf="f.password.errors && (f.password.dirty || f.password.touched || submitted)">
+        <div *ngIf="f.password.errors.required">Champ obligatoire</div>
+        <div *ngIf="f.password.errors.minlength">Vous devez entrer au moins 6 caractères</div>
+      </div>
+
+      <ion-item>
+        <ion-icon  color="secondary" name="lock-closed" slot="start"></ion-icon>
+        <ion-label position="floating">Confirmer mot de passe</ion-label>
+        <ion-input clearInput="true" [type]="type" formControlName="repassword"></ion-input>
+        <ion-icon  [color]="color" [name]="eye" (click)="changePassword()" slot="end" style="margin-top: 15px;"></ion-icon>
+      </ion-item>
+      <div class="error" *ngIf="f.repassword.errors && (f.repassword.dirty || f.repassword.touched || submitted)">
+        <div *ngIf="f.repassword.errors.required">Champ obligatoire</div>
+        <div *ngIf="f.repassword.errors.mustMatch">Vous devez saisir le même mot de passe        </div>
+      </div>
+      <ion-item>
+        <ion-label>Role</ion-label>
+        <ion-select value="Client" (ionChange)="show($event.target.value)">
+          <ion-select-option value="Client">Client</ion-select-option>
+          <ion-select-option value="Livreur">Livreur</ion-select-option>
+          <ion-select-option value="Magasiner">Magasinier</ion-select-option>
+          <ion-select-option value="Adminstrateur">Admin</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-button type="submit" routerDirection="forward" color="tertiary" fill="solid" expand="block">
+        <ion-icon name="person-add" slot="start"></ion-icon> 
+        Inscrire
+      </ion-button>
+    </div>
+  </form>
+</div>
+<div class="main" *ngIf="registred">
+  
+</div>
