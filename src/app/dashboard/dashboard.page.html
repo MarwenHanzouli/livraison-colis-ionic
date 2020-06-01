@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons  slot="end">
+      <ion-button (click)="presentPopoverAccount($event)" fill="clear" slot="end">
+        <ion-icon color="tertiary"  class="icon" slot="end" md="person-circle" ios="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+</ion-header>
+<ion-content>
+  <app-home *ngIf="home"></app-home>
+  <app-my-account *ngIf="account"></app-my-account>
+  <app-notifications *ngIf="notifications"></app-notifications>
+  <app-ambulances *ngIf="ambulances"></app-ambulances>
+  <app-ask-emergency *ngIf="askForEmergency"></app-ask-emergency>
+  <app-list-hospitals *ngIf="hospitals"></app-list-hospitals>
+  <app-my-ambulance *ngIf="ambulance"></app-my-ambulance>
+</ion-content>
+
+

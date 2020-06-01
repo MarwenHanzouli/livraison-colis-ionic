@@ -2,24 +2,38 @@ import { Injectable, NgZone } from '@angular/core';
 import { AbstractHttpService } from '../AbstractHttpService';
 import { User } from '../models/User.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
+import { Plugins } from '@capacitor/core';
+const { Storage } = Plugins;
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService extends AbstractHttpService{
-
+  public userOb:Observable<any>;
+  private USER_STORAGE: string ="USER";
+  private u:any;
   apiUrl=this.url;
+  private userSubject:BehaviorSubject<any>;
   constructor(private httpClient:HttpClient,
               public afStore: AngularFirestore,
               public ngFireAuth: AngularFireAuth,
               public router: Router,  
               public ngZone: NgZone
-            ) { 
-    super();
+            ) {           
+              
+              super();
+              this.userSubject=new BehaviorSubject<any>(null)
+    
+  }
+  public next(us){
+    this.userSubject.next(us);
+    this.userOb=this.userSubject.asObservable();
   }
   register(user:User){
     return this.httpClient.post<Observable<any>>(`${this.apiUrl}users/add`,user);
@@ -36,4 +50,12 @@ export class UsersService extends AbstractHttpService{
   SignIn(email, password) {
     return this.ngFireAuth.signInWithEmailAndPassword(email, password);
   }
+  async logout(){ 
+    return this.ngFireAuth.signOut().then(async () => {
+      this.router.navigate(['/home']);
+      await Storage.remove({key:this.USER_STORAGE});
+      this.userSubject.next(null);
+    });
+  }
+  
 }

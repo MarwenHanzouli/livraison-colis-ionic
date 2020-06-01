@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { UsersService } from '../services/users.service';
 import { ToastController, LoadingController } from '@ionic/angular';
+import { Network } from '@capacitor/core';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,13 +15,16 @@ export class ForgotPasswordPage implements OnInit {
   submitted: boolean=false;
   loading:boolean=false;
   loader:any=null;
+  private network:boolean;
   constructor(private formBuilder: FormBuilder,
     private usersService:UsersService,
     public toastController: ToastController,
-    public loadingController: LoadingController) { }
+    public loadingController: LoadingController
+    ) { }
 
   ngOnInit() {
     this.initForm();
+
   }
   initForm()
   {
@@ -35,6 +39,12 @@ export class ForgotPasswordPage implements OnInit {
     this.submitted=true;
     if(this.forgotForm.invalid)
     {
+      return;
+    }
+    let status = await Network.getStatus();
+    if(!status.connected)
+    {
+      window.alert("Vérifiez votre accès internet");
       return;
     }
     this.loader = await this.loadingController.create({

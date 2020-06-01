@@ -1,0 +1,14 @@
+<ion-list *ngIf="user | async as u">
+  <ion-list-header>Connecté en tant que</ion-list-header>
+  <ion-chip color="tertiary">
+    <ion-avatar>
+      <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+    </ion-avatar>
+    <ion-label>{{u["prenom"]+' '+u["nom"]}}</ion-label>
+  </ion-chip>
+  <ion-item>{{u.role}}</ion-item>
+  <ion-button fill="solid" expand="full" button (click)="logout()">
+    <ion-icon ios="log-out-outline" md="log-out"></ion-icon>
+    Déconnexion
+  </ion-button>
+</ion-list>

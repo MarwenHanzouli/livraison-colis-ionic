@@ -8,7 +8,7 @@
 *.apk
 *.ap_
 *.aab
-
+app/google-services.json
 # Files for the ART/Dalvik VM
 *.dex
 

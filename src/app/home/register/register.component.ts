@@ -1,15 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ToastController, Platform } from '@ionic/angular';
 
 import { MustMatch } from 'src/app/helpers/validators';
 import { HomeService } from 'src/app/services/home.service';
 import { UsersService } from 'src/app/services/users.service';
-import { Plugins } from '@capacitor/core';
+import { Plugins, Network } from '@capacitor/core';
 import {FCM} from 'capacitor-fcm';
 import { User } from 'src/app/models/User.model';
-const fcm = new FCM();
+import { NetworkService } from 'src/app/services/network.service';
+
 
 @Component({
   selector: 'app-register',
@@ -30,17 +31,23 @@ export class RegisterComponent implements OnInit , OnDestroy {
   emailRegistred:boolean=false;
   role:string="Client";
   subscribe:Subscription;
+  private network:boolean;
   constructor(private formBuilder: FormBuilder,
               private usersService:UsersService,
               public loadingController: LoadingController,
               public toastController: ToastController,
-              private homeService:HomeService) { }
+              private homeService:HomeService,
+              private netService:NetworkService,
+              private platform:Platform) { }
 
   ngOnInit() {
     this.initForm();
     this.type="password";
     this.eye="eye-off";
     this.color="primary";
+    this.netService.obNetwork.subscribe((data)=>{
+      this.network=data.connected;
+    });
   }
   initForm()
   {
@@ -74,22 +81,35 @@ export class RegisterComponent implements OnInit , OnDestroy {
     {
       return;
     }
+    let status = await Network.getStatus();
+    if(!status.connected)
+    {
+      this.presentToast("Vérifiez votre accès internet");
+      return;
+    }
     this.loader = await this.loadingController.create({
-      message: "S'il vous plaît, attendez..."
+      message: "Attendez s'il vous plaît..."
     });
-    //const {token} = await fcm.getToken();
-    //console.log(token) 
+    let tokenDevice;
+    if(this.platform.is('hybrid'))
+    {
+      const fcm = new FCM();
+      console.log(fcm)
+      const {token} = await fcm.getToken();
+      tokenDevice=token;
+      console.log(token)
+    }
     let user=new User(this.registerForm.value['lastName'],this.registerForm.value['firstName'],
     this.registerForm.value['email'],this.registerForm.value['phone'],this.registerForm.value['password'],
     this.registerForm.value['role']);
-    user.role=this.role;
-    console.log(user)
+    tokenDevice ? user.tokens.push(tokenDevice) : false
+    //console.log(user)
     let x=await this.loader.present();
     this.subscribe=this.usersService.register(user).subscribe(async (data)=>{
-      console.log(data);
+      //console.log(data);
       this.loader.dismiss();
       this.registred=true;
-      await this.usersService.SendVerificationMail();
+      //await this.usersService.SendVerificationMail();
       let y=await this.presentToast("Cette inscription est terminée avec succès",3000);
       this.homeService.displayLogin();
     },

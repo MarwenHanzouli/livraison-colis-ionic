@@ -2,10 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ToastController, Platform } from '@ionic/angular';
 import { UsersService } from 'src/app/services/users.service';
-import { User } from 'src/app/models/User.model';
-import { NetworkService } from 'src/app/services/network.service';
+import { Plugins, Network } from '@capacitor/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import {FCM} from 'capacitor-fcm';
+const fcm = new FCM();
+const { Storage } = Plugins;
 
 @Component({
   selector: 'app-login',
@@ -21,7 +24,7 @@ export class LoginComponent implements OnInit ,OnDestroy{
   type:string;
   eye:string;
   color:string;
-  private user:User;
+  private user:any;
   private network:boolean;
   subscribe:Subscription;
 
@@ -30,17 +33,17 @@ export class LoginComponent implements OnInit ,OnDestroy{
               public loadingController: LoadingController,
               private usersService:UsersService,
               public toastController: ToastController,
-              private netService:NetworkService
+              private firestore:AngularFirestore,
+              private platform: Platform
               ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    
     this.initForm();
     this.type="password";
     this.eye="eye-off";
     this.color="primary";
-    this.netService.obNetwork.subscribe((data)=>{
-      this.network=data.connected;
-    });
+    
   }
   initForm()
   {
@@ -68,12 +71,13 @@ export class LoginComponent implements OnInit ,OnDestroy{
     {
       return;
     }
-    if(!this.network)
+    let status = await Network.getStatus();
+    if(!status.connected)
     {
       this.presentToast("Vérifiez votre accès internet");
     }else{
       const loading = await this.loadingController.create({
-        message: "S'il vous plaît, attendez..."
+        message: "Attendez s'il vous plaît..."
       });
       await loading.present();
       let auth={
@@ -81,43 +85,46 @@ export class LoginComponent implements OnInit ,OnDestroy{
         'password':this.authForm.value['password']
       }
       this.usersService.SignIn(auth.email,auth.password).then(async (data)=>{
-        console.log(data.user.getIdToken());
-        this.presentToast("");
-        await loading.dismiss();
+        this.firestore.collection('users',ref => ref.where('email', '==', auth.email))
+        .snapshotChanges().subscribe(async (user)=>{
+          if(user.length!==0)
+          {
+            let tokenDevice;
+            this.user=user[0].payload.doc.data();
+            if(this.platform.is('hybrid'))
+            {
+              const {token} = await fcm.getToken();
+              tokenDevice=token;
+              if(!this.user.tokens.includes(tokenDevice)){
+                this.firestore.collection('users').doc(data.user.uid).set({tokens:this.user.tokens.push(tokenDevice)})
+              }
+            }
+            
+            await Storage.set({
+              key: "USER",
+              value:JSON.stringify(this.user)
+            });
+            this.usersService.next(this.user);
+            if(data.user.emailVerified){
+              //this.router.navigate(['/dashboard','Accueil']);
+            }
+            else{
+              //this.usersService.SendVerificationMail();
+            }
+            await loading.dismiss();
+            this.router.navigate(['/dashboard','Accueil']);
+          }
+        });
       }).catch(async (error)=>{
-        console.log(error);
         if(error.message.indexOf("The password is invalid or the user does not have a password")!==-1){
           this.presentToast("Le mot de passe n'est pas valide ou l'utilisateur n'a pas de mot de passe");
         }
+        else {
+          this.presentToast("Pas d'utilisateur correspondant à cet identifiant")
+        }
         await loading.dismiss();
-      })
-      //this.subscribe=this.usersService.login(auth).subscribe(async (data)=>{
-      //   if(data.length===0){
-      //     this.presentToast("This account is does not exist");
-      //     await loading.dismiss();
-      //   }
-      //   else
-      //   {
-      //     if(data[0].payload.doc.data()['password']===auth.password) {
-      //       this.user=<User>data[0].payload.doc.data();
-      //       this.user.id=data[0].payload.doc.id;
-      //       this.usersService.next(this.user);
-      //       this.router.navigate(['/dashboard','Home']);
-      //       await Storage.set({
-      //         key: "USER",
-      //         value:JSON.stringify(this.user)});
-      //       await loading.dismiss();
-      //     }
-      //     else{
-      //       this.presentToast("Email or password is invalid");
-      //       await loading.dismiss();
-      //     }
-      //   }
-        
-      // });
-      
+      });
     }
-    
   }
 
   async presentToast(message,dur?) {
