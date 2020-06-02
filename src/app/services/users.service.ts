@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { Plugins } from '@capacitor/core';
 const { Storage } = Plugins;
-
+var userSubject:BehaviorSubject<User>;
+Storage.get({ key: "USER" }).then((data)=>{
+  userSubject=new BehaviorSubject(JSON.parse(data.value));
+});
 
 @Injectable({
   providedIn: 'root'
@@ -19,21 +22,17 @@ export class UsersService extends AbstractHttpService{
   private USER_STORAGE: string ="USER";
   private u:any;
   apiUrl=this.url;
-  private userSubject:BehaviorSubject<any>;
   constructor(private httpClient:HttpClient,
               public afStore: AngularFirestore,
               public ngFireAuth: AngularFireAuth,
               public router: Router,  
               public ngZone: NgZone
             ) {           
-              
               super();
-              this.userSubject=new BehaviorSubject<any>(null)
-    
+              this.userOb=userSubject.asObservable();
   }
   public next(us){
-    this.userSubject.next(us);
-    this.userOb=this.userSubject.asObservable();
+    userSubject.next(us);
   }
   register(user:User){
     return this.httpClient.post<Observable<any>>(`${this.apiUrl}users/add`,user);
@@ -54,7 +53,7 @@ export class UsersService extends AbstractHttpService{
     return this.ngFireAuth.signOut().then(async () => {
       this.router.navigate(['/home']);
       await Storage.remove({key:this.USER_STORAGE});
-      this.userSubject.next(null);
+      userSubject.next(null);
     });
   }
   
