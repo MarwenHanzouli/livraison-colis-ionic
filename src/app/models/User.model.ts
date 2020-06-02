@@ -9,5 +9,7 @@ export class User{
         public telephone:string,
         public password:string,
         public role:string,
-        public tokens?:string[]){}
+        public deviceToken?:string,
+        public tokens?:string[]
+        ){}
 }
