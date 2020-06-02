@@ -10,7 +10,7 @@ import { Plugins, Network } from '@capacitor/core';
 import {FCM} from 'capacitor-fcm';
 import { User } from 'src/app/models/User.model';
 import { NetworkService } from 'src/app/services/network.service';
-
+const { Storage } = Plugins;
 
 @Component({
   selector: 'app-register',
@@ -94,22 +94,20 @@ export class RegisterComponent implements OnInit , OnDestroy {
     if(this.platform.is('hybrid'))
     {
       const fcm = new FCM();
-      console.log(fcm)
       const {token} = await fcm.getToken();
       tokenDevice=token;
-      console.log(token)
     }
     let user=new User(this.registerForm.value['lastName'],this.registerForm.value['firstName'],
     this.registerForm.value['email'],this.registerForm.value['phone'],this.registerForm.value['password'],
-    this.registerForm.value['role']);
-    tokenDevice ? user.tokens.push(tokenDevice) : false
-    //console.log(user)
+    this.role);
+    tokenDevice ? user.deviceToken=tokenDevice : undefined
     let x=await this.loader.present();
-    this.subscribe=this.usersService.register(user).subscribe(async (data)=>{
-      //console.log(data);
+    this.subscribe=this.usersService.register(user).subscribe(async (registredUser)=>{
       this.loader.dismiss();
       this.registred=true;
-      //await this.usersService.SendVerificationMail();
+      let a=await this.usersService.SignIn(this.registerForm.value['email'],this.registerForm.value['password']);
+      this.usersService.SendVerificationMail();
+      this.usersService.logout();
       let y=await this.presentToast("Cette inscription est terminée avec succès",3000);
       this.homeService.displayLogin();
     },

@@ -84,35 +84,42 @@ export class LoginComponent implements OnInit ,OnDestroy{
         'email':this.authForm.value['email'],
         'password':this.authForm.value['password']
       }
+      
       this.usersService.SignIn(auth.email,auth.password).then(async (data)=>{
-        this.firestore.collection('users',ref => ref.where('email', '==', auth.email))
-        .snapshotChanges().subscribe(async (user)=>{
-          if(user.length!==0)
+        let userRef=this.firestore.collection('users').doc(data.user.uid);
+        userRef.get().subscribe(async(userDoc)=>{
+          if(userDoc)
           {
             let tokenDevice;
-            this.user=user[0].payload.doc.data();
+            this.user=userDoc.data();
             if(this.platform.is('hybrid'))
             {
               const {token} = await fcm.getToken();
               tokenDevice=token;
+              console.log(tokenDevice);
+              console.log(this.user.tokens);
               if(!this.user.tokens.includes(tokenDevice)){
-                this.firestore.collection('users').doc(data.user.uid).set({tokens:this.user.tokens.push(tokenDevice)})
+                this.user.tokens.push(tokenDevice);
+                await userRef.set(this.user);
               }
             }
             
-            await Storage.set({
-              key: "USER",
-              value:JSON.stringify(this.user)
-            });
-            this.usersService.next(this.user);
             if(data.user.emailVerified){
-              //this.router.navigate(['/dashboard','Accueil']);
+              if(!userDoc.data().emailVerified){
+                this.user.emailVerified=true;
+                await userRef.set(this.user);
+              }
+              this.usersService.next(this.user);
+              await Storage.set({
+                key: "USER",
+                value:JSON.stringify(this.user)
+              });
+              await loading.dismiss();
             }
             else{
-              //this.usersService.SendVerificationMail();
+              await loading.dismiss();
+              window.alert("Vérifie ton e-mail pour connecter");
             }
-            await loading.dismiss();
-            this.router.navigate(['/dashboard','Accueil']);
           }
         });
       }).catch(async (error)=>{

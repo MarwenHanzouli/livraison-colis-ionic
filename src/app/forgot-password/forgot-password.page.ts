@@ -48,7 +48,7 @@ export class ForgotPasswordPage implements OnInit {
       return;
     }
     this.loader = await this.loadingController.create({
-      message: "S'il vous plaît, attendez..."
+      message: "Attendez s'il vous plaît..."
     });
     let x=await this.loader.present();
     this.usersService.PasswordRecover(this.forgotForm.value['email'])

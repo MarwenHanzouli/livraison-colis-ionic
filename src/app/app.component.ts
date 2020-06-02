@@ -4,10 +4,10 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { User } from './models/User.model';
 import { UsersService } from './services/users.service';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 const { Storage } = Plugins;
 
@@ -33,8 +33,7 @@ export class AppComponent implements OnInit,OnDestroy{
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private usersService:UsersService,
-    private router:Router,
-    private activatedRoute:ActivatedRoute
+    private router:Router
   ) {
     this.initializeApp();
   }
@@ -45,37 +44,27 @@ export class AppComponent implements OnInit,OnDestroy{
       this.splashScreen.hide();
     });
   }
-  async ngOnInit(){
-    let data=await Storage.get({ key: "USER" });
-    if(data.value && data.value!=="undefined")
-      {
-        this.disabled=false;
-        let u=JSON.parse(data.value);
-        this.usersService.next(u);
-        this.user=u;
-        this.preparerMenu();
-        const path = window.location.pathname.split('dashboard/')[1];
-        if (path !== undefined) 
-        {
-          this.selectedIndex = this.menu.findIndex(page => page.id.toLowerCase() === path.toLowerCase());
-        }
-        this.router.navigate(['/dashboard','Accueil']);
-      }   
-      else{
-        this.disabled=true;
-      }    
-    if(this.usersService.userOb)
-    {
+  ngOnInit(){
       this.userSubscription=this.usersService.userOb.subscribe((data)=>{
-        console.log(data)
-        if(data)
+        if(data && data!=="undefined")
         {
+          this.disabled=false;
           this.user=data;
-          this.preparerMenu();
-          console.log(this.menu)
+          const path = window.location.pathname.split('dashboard/')[1];
+          if (path !== undefined) 
+          {
+            this.selectedIndex = this.menu.findIndex(page => page.id.toLowerCase() === path.toLowerCase());
+            this.preparerMenu(path);
+          }
+          else{
+            this.preparerMenu('Accueil');
+          }
+          
+        }
+        else{
+          this.disabled=true; 
         }
       });
-    }
     this.router.events.pipe(filter(e=> e instanceof NavigationEnd)).subscribe(e=>{
       const path = window.location.pathname.split('dashboard/')[1];
       if (path !== undefined) 
@@ -95,7 +84,7 @@ export class AppComponent implements OnInit,OnDestroy{
       this.selectedIndex = this.menu.findIndex(page => page.id.toLowerCase() === path.toLowerCase());
     }
   }
-  preparerMenu(){
+  preparerMenu(url:string){
     this.menu=[
       {
         id:'Accueil',
@@ -186,5 +175,6 @@ export class AppComponent implements OnInit,OnDestroy{
     {
       this.menu=this.menu.concat(this.menuMagasinier);
     }
+    this.router.navigate(['/dashboard',url]);
   }
 }
