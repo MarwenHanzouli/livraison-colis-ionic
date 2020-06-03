@@ -1,13 +1,13 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "livraison-colis",
+  "appName": "Mes colis",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
   "linuxAndroidStudioPath":"/opt/android-studio-ide-192.6392135-linux/android-studio/bin/studio.sh",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "showSpinner": true
     }
   },
   "cordova": {}
