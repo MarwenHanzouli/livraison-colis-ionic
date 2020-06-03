@@ -10,7 +10,6 @@ import { UsersService } from './services/users.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 const { Storage } = Plugins;
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -44,7 +43,15 @@ export class AppComponent implements OnInit,OnDestroy{
       this.splashScreen.hide();
     });
   }
-  ngOnInit(){
+  async ngOnInit(){
+    let x=await Storage.get({ key: "USER" });
+    if(x.value && x.value!=="undefined")
+    {
+      this.usersService.next(JSON.parse(x.value));
+    }
+    else{
+      this.usersService.next(null);
+    }
       this.userSubscription=this.usersService.userOb.subscribe((data)=>{
         if(data && data!=="undefined")
         {

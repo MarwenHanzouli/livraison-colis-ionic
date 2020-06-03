@@ -1,8 +1,10 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col>
-        
+      <ion-col class="flex-center">
+        <div>
+          <img src="../assets/icon/instagram-logo-3.png" width="80" height="80">
+        </div>
       </ion-col>
       <ion-col size="12">
         <ion-segment  (ionChange)="segmentChanged($event)">
@@ -16,7 +18,11 @@
         <app-login *ngIf="login"></app-login>
         <app-register *ngIf="register"></app-register>
       </ion-col>
-      <ion-col></ion-col>
+      <ion-col>
+        
+      </ion-col>
     </ion-row>
   </ion-grid>  
+  
 </ion-content>
+<ion-footer><p> © Tous droits réservés - 2020 </p></ion-footer>

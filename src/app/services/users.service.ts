@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { AbstractHttpService } from '../AbstractHttpService';
 import { User } from '../models/User.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -9,15 +9,13 @@ import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { Plugins } from '@capacitor/core';
 const { Storage } = Plugins;
-var userSubject:BehaviorSubject<User>;
-Storage.get({ key: "USER" }).then((data)=>{
-  userSubject=new BehaviorSubject(JSON.parse(data.value));
-});
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService extends AbstractHttpService{
+  userSubject=new BehaviorSubject(null);
   public userOb:Observable<any>;
   private USER_STORAGE: string ="USER";
   private u:any;
@@ -29,11 +27,12 @@ export class UsersService extends AbstractHttpService{
               public ngZone: NgZone
             ) {           
               super();
-              this.userOb=userSubject.asObservable();
   }
   public next(us){
-    userSubject.next(us);
+    this.userSubject.next(us);
+    this.userOb=this.userSubject.asObservable();
   }
+
   register(user:User){
     return this.httpClient.post<Observable<any>>(`${this.apiUrl}users/add`,user);
   }
@@ -53,7 +52,7 @@ export class UsersService extends AbstractHttpService{
     return this.ngFireAuth.signOut().then(async () => {
       this.router.navigate(['/home']);
       await Storage.remove({key:this.USER_STORAGE});
-      userSubject.next(null);
+      this.userSubject.next(null);
     });
   }
   
