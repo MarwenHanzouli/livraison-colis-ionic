@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Plugins } from '@capacitor/core';
 import { Observable, BehaviorSubject, from } from 'rxjs';
 const { Network } = Plugins;
+const { Modals } = Plugins;
 var connected:boolean;
 Network.getStatus().then(function(res){
   connected=res.connected;
@@ -19,6 +20,12 @@ export class NetworkService {
   constructor() { 
     let handler = Network.addListener('networkStatusChange', (status) => {
       console.log("Network status changed", status);
+      if(!status.connected){
+        window.alert("offline");
+      }
+      else{
+        window.alert("connected");
+      }
       this.subject.next({connected:status.connected})
     });
     // Network.getStatus().then((data)=>{

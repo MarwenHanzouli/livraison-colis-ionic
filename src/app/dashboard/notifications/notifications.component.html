@@ -1,0 +1,13 @@
+<ion-content>
+  <ion-list>
+    <ion-card *ngFor="let item of data">
+      {{item}}
+    </ion-card>
+  </ion-list>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Chargement...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

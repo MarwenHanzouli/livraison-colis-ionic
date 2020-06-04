@@ -27,6 +27,7 @@ export class AppComponent implements OnInit,OnDestroy{
   private menuClient:any[];
   private menuLivreur:any[]; 
   private menuMagasinier:any[];  
+  private menuAdmin:any[];
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -146,6 +147,14 @@ export class AppComponent implements OnInit,OnDestroy{
         icon: 'car'
       }
     ];
+    this.menuAdmin=[
+      {
+        id:'Utilisateurs',
+        title: 'Gérer les utilisateurs',
+        url: '/dashboard/Utilisateurs',
+        icon: 'settings'
+      }
+    ];
     this.menuMagasinier=[
       {
         id:'Gestion',
@@ -154,9 +163,9 @@ export class AppComponent implements OnInit,OnDestroy{
         icon: 'build'
       },
       {
-        id:'Courses',
+        id:'Suivi',
         title: 'Suivi les courses',
-        url: '/dashboard/Courses',
+        url: '/dashboard/Suivi',
         icon: 'list'
       },
       {

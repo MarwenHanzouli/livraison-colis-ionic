@@ -14,13 +14,17 @@ export class DashboardPage implements OnInit , OnDestroy{
   
   
   private title:string;
-  home:boolean;
-  account:boolean;
+  accueil:boolean;
+  compte:boolean;
   notifications:boolean;
-  ambulance:boolean;
-  ambulances:boolean;
-  askForEmergency:boolean;
-  hospitals:boolean;
+  voitures:boolean;
+  passer_commande:boolean;
+  mes_commandes:boolean;
+  gerer_colis:boolean;
+  gerer_utilisateurs:boolean;
+  mes_courses:boolean;
+  scanner:boolean;
+  suivi_courses:boolean;
   private subscriptionUser:Subscription;
   role:string;
   constructor(private activatedRoute:ActivatedRoute,
@@ -29,8 +33,8 @@ export class DashboardPage implements OnInit , OnDestroy{
               private usersService:UsersService) { }
 
   ngOnInit() {
-    this.home=true;
-    this.account=this.notifications=this.ambulance=this.ambulances=this.askForEmergency=this.hospitals=false;
+    // this.accueil=true;
+    // this.compte=this.notifications=this.voitures=this.ambulances=this.askForEmergency=this.hospitals=false;
     this.title=this.activatedRoute.snapshot.paramMap.get('id');
     this.subscriptionUser=this.usersService.userOb.subscribe((data)=>{
       //console.log(data)
@@ -45,37 +49,79 @@ export class DashboardPage implements OnInit , OnDestroy{
     {
       if(path==="Accueil")
       {
-        this.home=true;
-        this.account=this.notifications=this.ambulance=this.ambulances=this.askForEmergency=this.hospitals=false;
+        this.accueil=true;
+        this.compte=this.notifications=this.voitures=this.gerer_utilisateurs
+        =this.gerer_colis=this.passer_commande=this.suivi_courses=this.scanner
+        =this.mes_commandes=this.mes_courses=false;
       }else if(path==="Notifications")
       {
         this.notifications=true;
-        this.account=this.home=this.ambulance=this.ambulances=this.askForEmergency=this.hospitals=false;
+        this.compte=this.accueil=this.voitures=this.gerer_utilisateurs
+        =this.gerer_colis=this.passer_commande=this.suivi_courses=this.scanner
+        =this.mes_commandes=this.mes_courses=false;      
       }
-      else if(path==="Mon compte")
+      else if(path==="Compte")
       {
-        this.account=true;
-        this.home=this.notifications=this.ambulance=this.ambulances=this.askForEmergency=this.hospitals=false;
+        this.compte=true;
+        this.notifications=this.accueil=this.voitures=this.gerer_utilisateurs
+        =this.gerer_colis=this.passer_commande=this.suivi_courses=this.scanner
+        =this.mes_commandes=this.mes_courses=false;        
       }
-      else if(path==="Emergency")
+      else if(path==="Commande")
       {
-        this.askForEmergency=true;
-        this.account=this.home=this.notifications=this.ambulance=this.ambulances=this.hospitals=false;
+        this.passer_commande=true;
+        this.notifications=this.accueil=this.voitures=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.suivi_courses=this.scanner
+        =this.mes_commandes=this.mes_courses=false;      
       }
-      else if(path==="Hospitals")
+      else if(path==="Commandes")
       {
-        this.hospitals=true;
-        this.account=this.home=this.notifications=this.ambulance=this.ambulances=this.askForEmergency=false;
+        this.mes_commandes=true;
+        this.notifications=this.accueil=this.voitures=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.suivi_courses=this.scanner
+        =this.passer_commande=this.mes_courses=false;   
       }
-      else if(path==="Ambulance")
+      else if(path==="Voitures")
       {
-        this.ambulance=true;
-        this.account=this.home=this.notifications=this.hospitals=this.ambulances=this.askForEmergency=false;
+        this.voitures=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.suivi_courses=this.scanner
+        =this.passer_commande=this.mes_courses=false;   
       }
-      else if(path==="Ambulances")
+      else if(path==="Scanner")
       {
-        this.ambulances=true;
-        this.account=this.home=this.notifications=this.hospitals=this.ambulance=this.askForEmergency=false;
+        this.scanner=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.suivi_courses=this.voitures
+        =this.passer_commande=this.mes_courses=false; 
+      }
+      else if(path==="Courses")
+      {
+        this.mes_courses=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.suivi_courses=this.voitures
+        =this.passer_commande=this.scanner=false;
+      }
+      else if(path==="Suivi")
+      {
+        this.suivi_courses=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_utilisateurs
+        =this.gerer_colis=this.compte=this.mes_courses=this.voitures
+        =this.passer_commande=this.scanner=false;
+      }
+      else if(path==="Gestion")
+      {
+        this.gerer_colis=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_utilisateurs
+        =this.suivi_courses=this.compte=this.mes_courses=this.voitures
+        =this.passer_commande=this.scanner=false;
+      }
+      else if(path==="Utilisateurs")
+      {
+        this.gerer_utilisateurs=true;
+        this.notifications=this.accueil=this.mes_commandes=this.gerer_colis
+        =this.suivi_courses=this.compte=this.mes_courses=this.voitures
+        =this.passer_commande=this.scanner=false;
       }
     }
   }

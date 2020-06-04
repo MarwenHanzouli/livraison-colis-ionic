@@ -1,0 +1,21 @@
+<ion-content>
+  <ion-card>
+    <img src="assets/images/code_barre.jpg"/>
+    <ion-card-content>
+      <ion-text>Scanner <strong>QRCode/Barcode</strong></ion-text>
+
+      <ion-button color="success" expand="full" (click)="scan()">
+        <ion-icon md="qr-code" ios="qr-code-outline" slot="start"></ion-icon>
+        Scanner un colis
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+  <ion-item *ngIf="data">
+    <ion-label position="stacked">Scan Format</ion-label>
+    <ion-input [value]="data.format" readonly></ion-input>
+  </ion-item>
+  <ion-item *ngIf="data">
+    <ion-label position="stacked">Scan Information</ion-label>
+    <ion-input [value]="data.text" readonly></ion-input>
+  </ion-item>
+</ion-content>

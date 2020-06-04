@@ -13,13 +13,17 @@
   
 </ion-header>
 <ion-content>
-  <app-home *ngIf="home"></app-home>
-  <app-my-account *ngIf="account"></app-my-account>
+  <app-accueil *ngIf="accueil"></app-accueil>
+  <app-passer-commande *ngIf="passer_commande"></app-passer-commande>
+  <app-mon-compte *ngIf="compte"></app-mon-compte>
   <app-notifications *ngIf="notifications"></app-notifications>
-  <app-ambulances *ngIf="ambulances"></app-ambulances>
-  <app-ask-emergency *ngIf="askForEmergency"></app-ask-emergency>
-  <app-list-hospitals *ngIf="hospitals"></app-list-hospitals>
-  <app-my-ambulance *ngIf="ambulance"></app-my-ambulance>
+  <app-mes-voitures *ngIf="voitures"></app-mes-voitures>
+  <app-gerer-courses *ngIf="gerer_courses"></app-gerer-courses>
+  <app-mes-commandes *ngIf="mes_commandes"></app-mes-commandes>
+  <app-gerer-utilisateurs *ngIf="gerer_utilisateurs"></app-gerer-utilisateurs>
+  <app-gerer-colis *ngIf="gerer_colis"></app-gerer-colis>
+  <app-scanner *ngIf="scanner"></app-scanner>
+  <app-suivi-courses *ngIf="suivi_courses"></app-suivi-courses>
 </ion-content>
 
 

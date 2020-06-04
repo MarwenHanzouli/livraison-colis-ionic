@@ -1,0 +1,67 @@
+
+<ion-card *ngIf="obsUser | async as u">
+  <ion-item>
+    <ion-avatar slot="start">
+      <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+    </ion-avatar>
+    <ion-label color="primary">{{u.role}}</ion-label>
+    <ion-chip *ngIf="u.verified" color="success">
+      <ion-icon md="checkmark-circle" ios="checkmark-circle-outline"></ion-icon>
+      <ion-label>Vérifié</ion-label>
+    </ion-chip>
+    <ion-chip *ngIf="!u.verified" color="danger">
+      <ion-icon md="close-circle" ios="close-circle-outline"></ion-icon>
+      <ion-label>Non vérifié</ion-label>
+    </ion-chip>
+  </ion-item>
+  <ion-card-subtitle>
+    Les informations personnelles
+    <ion-icon md="create" ios="create-outline" slot="start"></ion-icon>
+  </ion-card-subtitle>
+  <form [formGroup]="userForm" (ngSubmit)="modifier()">
+    <ion-item>
+      <ion-icon  color="secondary" name="person" slot="start"></ion-icon>
+      <ion-label position="floating">Nom</ion-label>
+      <ion-input formControlName="nom"  readonly="false"></ion-input>
+      <ion-icon name="create-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-icon  color="secondary" name="person" slot="start"></ion-icon>
+      <ion-label position="floating">Prenom</ion-label>
+      <ion-input formControlName="prenom"  readonly="false"></ion-input>
+      <ion-icon name="create-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-icon  color="secondary" name="mail" slot="start"></ion-icon>
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input formControlName="email" readonly="false"></ion-input>
+      <ion-icon name="create-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-icon color="secondary" name="call" slot="start"></ion-icon>
+      <ion-label position="floating">Téléphone</ion-label>
+      <ion-input formControlName="telephone" readonly="false"></ion-input>
+      <ion-icon name="create-outline" slot="end"></ion-icon>
+    </ion-item>
+  </form>
+  <ion-card-subtitle>
+    Changer le mot de passe
+  </ion-card-subtitle>
+  <form [formGroup]="mdpForm" (ngSubmit)="modifierMdp()">
+    <ion-item>
+      <ion-icon  color="secondary" name="lock-closed" slot="start"></ion-icon>
+      <ion-label position="floating">Entrer le nouveau mot de passe</ion-label>
+      <ion-input formControlName="mdp"  readonly="false"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-icon color="secondary" name="lock-closed" slot="start"></ion-icon>
+      <ion-label position="floating">Confirmer le nouveau mdp</ion-label>
+      <ion-input formControlName="remdp"  readonly="false"></ion-input>
+    </ion-item>
+  </form>
+</ion-card>
+<ion-fab horizontal="end" vertical="bottom">
+  <ion-fab-button>
+    <ion-icon md="create" ios="create-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
