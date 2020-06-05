@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-notifications',
@@ -10,11 +11,17 @@ export class NotificationsComponent implements OnInit {
 
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
   private data:any[]=[];
-  constructor() {}
+  firstLoadingEnd:boolean=false;
+  
+  constructor(private notificationsService:NotificationsService) {}
   ngOnInit(): void {
-    for(let i=0;i<2000;i++){
-      this.data.push(i);
-    }
+    this.notificationsService.getAllNotifications().subscribe((notifs)=>{
+      this.data=notifs;
+      this.firstLoadingEnd=true;
+    })
+    // for(let i=0;i<200;i++){
+    //   this.data.push(i);
+    // }
     
   }
 
@@ -28,7 +35,7 @@ export class NotificationsComponent implements OnInit {
       if (this.data.length == 1000) {
         event.target.disabled = true;
       }
-    }, 1000);
+    }, 3000);
   }
 
   toggleInfiniteScroll() {

@@ -1,7 +1,8 @@
 <ion-content>
+  <ion-spinner name="lines-small" *ngIf="!firstLoadingEnd"></ion-spinner>
   <ion-list>
     <ion-card *ngFor="let item of data">
-      {{item}}
+      {{item.title}}
     </ion-card>
   </ion-list>
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
